@@ -1,0 +1,1 @@
+# MACD-trading-algorithm
