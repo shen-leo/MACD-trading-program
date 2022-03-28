@@ -57,7 +57,9 @@ def plot_macd(prices, macd, signal, histogram):
 
 # MACD strategy implementation
 def implement_macd_strategy(prices, data):
-    buy_price = [], sell_price = [], macd_signal = []
+    buy_price = []
+    sell_price = []
+    macd_signal = []
     signal = 0
 
     for i in range(len(data)):
@@ -89,15 +91,40 @@ def implement_macd_strategy(prices, data):
     return buy_price, sell_price, macd_signal
 
 
+# function to plot the trade list
+def plot_trade_list(ticker, historical_data, ticker_macd, buy_price, sell_price):
+    ax1 = plt.subplot2grid((8, 1), (0, 0), rowspan=5, colspan=1)
+    ax2 = plt.subplot2grid((8, 1), (5, 0), rowspan=3, colspan=1)
+
+    ax1.plot(historical_data['close'], color='skyblue', linewidth=2, label=ticker)
+    ax1.plot(historical_data.index, buy_price, marker='^', color='green', markersize=10, label='BUY SIGNAL',
+             linewidth=0)
+    ax1.plot(historical_data.index, sell_price, marker='v', color='r', markersize=10, label='SELL SIGNAL', linewidth=0)
+    ax1.legend()
+    ax1.set_title(f'{ticker} MACD SIGNALS')
+    ax2.plot(ticker_macd['macd'], color='grey', linewidth=1.5, label='MACD')
+    ax2.plot(ticker_macd['signal'], color='skyblue', linewidth=1.5, label='SIGNAL')
+
+    for i in range(len(ticker_macd)):
+        if str(ticker_macd['hist'][i])[0] == '-':
+            ax2.bar(ticker_macd.index[i], ticker_macd['hist'][i], color='#ef5350')
+        else:
+            ax2.bar(ticker_macd.index[i], ticker_macd['hist'][i], color='#26a69a')
+
+    plt.legend(loc='lower right')
+    plt.show()
+
+
 # main function to drive the program
 def main():
-    ticker = input("Stock Ticker: ")
+    ticker = input("Stock Ticker: ").upper()
     date = input("Date: ")
     historical_data = get_historical_data(ticker, date)
     ticker_macd = calculate_macd(historical_data['close'], 26, 12, 9)
     ticker_macd.tail()
     plot_macd(historical_data['close'], ticker_macd['macd'], ticker_macd['signal'], ticker_macd['hist'])
     buy_price, sell_price, macd_signal = implement_macd_strategy(historical_data['close'], ticker_macd)
+    plot_trade_list(ticker, historical_data, ticker_macd, buy_price, sell_price)
 
 
 if __name__ == "__main__":
