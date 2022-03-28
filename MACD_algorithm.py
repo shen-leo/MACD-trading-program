@@ -37,6 +37,7 @@ def calculate_macd(price, slow, fast, smooth):
     return df
 
 
+# plot for the MACD
 def plot_macd(prices, macd, signal, histogram):
     ax1 = plt.subplot2grid((8, 1), (0, 0), rowspan=5, colspan=1)
     ax2 = plt.subplot2grid((8, 1), (5, 0), rowspan=3, colspan=1)
@@ -54,6 +55,40 @@ def plot_macd(prices, macd, signal, histogram):
     plt.legend(loc='lower right')
 
 
+# MACD strategy implementation
+def implement_macd_strategy(prices, data):
+    buy_price = [], sell_price = [], macd_signal = []
+    signal = 0
+
+    for i in range(len(data)):
+        if data['macd'][i] > data['signal'][i]:
+            if signal != 1:
+                buy_price.append(prices[i])
+                sell_price.append(np.nan)
+                signal = 1
+                macd_signal.append(signal)
+            else:
+                buy_price.append(np.nan)
+                sell_price.append(np.nan)
+                macd_signal.append(0)
+        elif data['macd'][i] < data['signal'][i]:
+            if signal != -1:
+                buy_price.append(np.nan)
+                sell_price.append(prices[i])
+                signal = -1
+                macd_signal.append(signal)
+            else:
+                buy_price.append(np.nan)
+                sell_price.append(np.nan)
+                macd_signal.append(0)
+        else:
+            buy_price.append(np.nan)
+            sell_price.append(np.nan)
+            macd_signal.append(0)
+
+    return buy_price, sell_price, macd_signal
+
+
 # main function to drive the program
 def main():
     ticker = input("Stock Ticker: ")
@@ -62,6 +97,7 @@ def main():
     ticker_macd = calculate_macd(historical_data['close'], 26, 12, 9)
     ticker_macd.tail()
     plot_macd(historical_data['close'], ticker_macd['macd'], ticker_macd['signal'], ticker_macd['hist'])
+    buy_price, sell_price, macd_signal = implement_macd_strategy(historical_data['close'], ticker_macd)
 
 
 if __name__ == "__main__":
