@@ -1,5 +1,8 @@
 import requests
 import pandas as pd
+import numpy as np
+from math import floor
+from termcolor import colored as cl
 import matplotlib.pyplot as plt
 
 plt.rcParams['figure.figsize'] = (20, 10)
@@ -34,13 +37,31 @@ def calculate_macd(price, slow, fast, smooth):
     return df
 
 
+def plot_macd(prices, macd, signal, histogram):
+    ax1 = plt.subplot2grid((8, 1), (0, 0), rowspan=5, colspan=1)
+    ax2 = plt.subplot2grid((8, 1), (5, 0), rowspan=3, colspan=1)
+
+    ax1.plot(prices)
+    ax2.plot(macd, color='grey', linewidth=1.5, label='MACD')
+    ax2.plot(signal, color='skyblue', linewidth=1.5, label='SIGNAL')
+
+    for i in range(len(prices)):
+        if str(histogram[i])[0] == '-':
+            ax2.bar(prices.index[i], histogram[i], color='#ef5350')
+        else:
+            ax2.bar(prices.index[i], histogram[i], color='#26a69a')
+
+    plt.legend(loc='lower right')
+
+
 # main function to drive the program
 def main():
     ticker = input("Stock Ticker: ")
     date = input("Date: ")
     historical_data = get_historical_data(ticker, date)
     ticker_macd = calculate_macd(historical_data['close'], 26, 12, 9)
-    print(ticker_macd.tail())
+    ticker_macd.tail()
+    plot_macd(historical_data['close'], ticker_macd['macd'], ticker_macd['signal'], ticker_macd['hist'])
 
 
 if __name__ == "__main__":
