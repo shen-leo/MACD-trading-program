@@ -1,4 +1,4 @@
-# MACD-trading-algorithm
+# MACD-trading-program
 A Python program that allows the user to input a stock ticker, date, and investment amount to predict returns based on the Moving Average Convergence/Divergence (MACD) method.
 
 
