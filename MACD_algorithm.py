@@ -168,7 +168,8 @@ def back_testing(ticker, strategy, historical_data, investment_value):
     macd_investment_ret_df = pd.DataFrame(macd_investment_ret).rename(columns={0: 'investment_returns'})
     total_investment_ret = round(sum(macd_investment_ret_df['investment_returns']), 2)
     profit_percentage = floor((total_investment_ret / investment_value) * 100)
-    print(cl('Profit gained from the MACD strategy by investing $100k in {} : {}'.format(ticker, total_investment_ret),
+    print(cl('Profit gained from the MACD strategy by investing ${} in {} : {}'.format(investment_value, ticker,
+                                                                                       total_investment_ret),
              attrs=['bold']))
     print(cl('Profit percentage of the MACD strategy : {}%'.format(profit_percentage), attrs=['bold']))
 
